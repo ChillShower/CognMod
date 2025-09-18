@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 folder = filedialog.askdirectory(title="Select CSV/image Folder")
 
-pcaAnalyze=False
+pcaAnalyze=True
 CsvFile=os.path.join(folder,'Final_Grades.csv')
 
 average=np.array(list(Image.open(os.path.join(folder,"new.jpg")).convert('L').getdata())) 
@@ -79,16 +79,44 @@ if pcaAnalyze:
 
     plt.figure(figsize=(10,4))
     for i in range(5):
-        plt.subplot(2,5,i+1)
-        plt.imshow(imgsArray[i].reshape(width, height), cmap='gray')
-        plt.title("Original")
-        plt.axis("off")
 
-        plt.subplot(2,5,i+6)
-        plt.imshow(imgs_reconstructed[i].reshape(width, height), cmap='gray')
-        plt.title("Reconstructed")
-        plt.axis("off")
+        scores = converted_data[:, i]   # all projected values along component k
+        pc=pca.components_[i].reshape((height, width))
+        avg_img = average.reshape((height, width))
+        minscore=scores.min()
+        maxscore=scores.max()
+        img_min = avg_img + minscore * pc
+        img_avg = avg_img
+        img_max = avg_img + maxscore * pc
 
+        # Normalize for display (0..255)
+        def to_uint8(img):
+            img = np.nan_to_num(img)  # avoid NaN/inf
+            img_min, img_ptp = img.min(), img.ptp()
+            if img_ptp == 0:
+                return np.clip(img - img_min, 0, 255).astype(np.uint8)
+            return ((img - img_min) / img_ptp * 255.0).astype(np.uint8)
+
+        img_min = to_uint8(img_min)
+        img_avg = to_uint8(img_avg)
+        img_max = to_uint8(img_max)
+
+        # Plot side by side
+        fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+        axes[0].imshow(img_min, cmap="gray")
+        axes[0].set_title(f"PC{i+1} - min")
+        axes[0].axis("off")
+
+        axes[1].imshow(img_avg, cmap="gray")
+        axes[1].set_title("Average image")
+        axes[1].axis("off")
+
+        axes[2].imshow(img_max, cmap="gray")
+        axes[2].set_title(f"PC{i+1} - max")
+        axes[2].axis("off")
+
+        plt.tight_layout()
+        plt.savefig(f"PC_{i}_Init.png", dpi=600, bbox_inches="tight")  # dpi=resolution, bbox_inches=trim whitespace
 
     plt.show()
 
@@ -130,7 +158,7 @@ print("Weights shape:", weights.shape)
 print("Weights:", weights)
 
 selected_features = np.where(mask)[0]  # indices of kept features
-analyzeSelection=True
+analyzeSelection=False
 if analyzeSelection:
     selected_features = np.where(mask)[0]  # indices of kept features
     """    for j in range(4):
@@ -270,7 +298,9 @@ if analyzeSelection:
         axes[2].axis("off")
 
         plt.tight_layout()
-        plt.show()
+        plt.savefig(f"PC_{comp_idx}.png", dpi=600, bbox_inches="tight")  # dpi=resolution, bbox_inches=trim whitespace
+
+        
 
 
 intercept=final_model.intercept_
