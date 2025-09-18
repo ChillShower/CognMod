@@ -40,7 +40,7 @@ width, height = 200,200
 imgsArray=np.array(imgs)
 print(imgsArray)
 
-pca = PCA(40) # we need 20 principal components.
+pca = PCA(20) # we need 20 principal components.
 converted_data = pca.fit_transform(imgsArray)
 
 if pcaAnalyze:
@@ -304,7 +304,7 @@ oldnorm_img=norm_img
 # Save instead of just showing
 save_path = os.path.join(folder, f"class_{rating/2}_weightmap.jpg")
 Image.fromarray(norm_img.reshape(200,200), mode="L").save(save_path)"""
-ratings = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5.5]
+ratings = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5,5, 5.5]
 
 coef = final_model.coef_      # (n_features_selected,)
 intercept = final_model.intercept_
@@ -313,7 +313,7 @@ synthetic_images = []
 
 for r in ratings:
     # scale along the direction of coef
-    z = ((r - intercept) / np.dot(coef, coef)) * coef
+    z = ((r - intercept) / np.dot(coef, coef)) * (-coef)
     
     # put back into full PCA space
     weights_pca = np.zeros(pca.n_components_)
