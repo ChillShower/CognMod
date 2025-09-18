@@ -11,6 +11,9 @@ class ImageReviewer:
         self.root = root
         self.root.title("Image Reviewer")
 
+        # Empty array of reviewed images
+        self.reviewed = []
+
         # Image display
         self.image_label = tk.Label(root)
         self.image_label.pack()
@@ -48,22 +51,31 @@ class ImageReviewer:
             self.image_label.config(text="No images found.")
             return
         self.index += 1
-        if self.index >= len(self.images):
+
+        if self.index > 10 & len(set(self.reviewed)) == 10:
             self.image_label.config(text="All images reviewed.")
+            self.root.destroy()
             return
-        img_path = self.images[self.index]
-        img = Image.open(img_path)
+        
+        self.img_path = random.choice(self.images)
+        #img_path = self.images[self.index]
+        
+        if self.img_path not in self.reviewed:
+            self.reviewed.append(self.img_path)
+
+        img = Image.open(self.img_path)
         self.tk_img = ImageTk.PhotoImage(img)
         self.image_label.config(image=self.tk_img)
         self.grade_slider.set(5)  # reset slider to middle value
 
     def save_result(self, decision):
-        img_path = self.images[self.index]
+        #img_path = random.choice(self.images)
+        #img_path = self.images[self.index]
         grade = self.grade_slider.get()
         with open(self.csv_file, "a", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([os.path.basename(img_path), decision, grade])
-        print(f"{decision}: {img_path}, grade={grade}")
+            writer.writerow([os.path.basename(self.img_path), decision, grade])
+        print(f"{decision}: {self.img_path}, grade={grade}")
 
     def keep_image(self):
         self.save_result("keep")
