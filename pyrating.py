@@ -19,7 +19,7 @@ class ImageReviewer:
         self.image_label.pack()
 
         # Grading slider
-        self.grade_slider = tk.Scale(root, from_=0, to=5, orient=tk.HORIZONTAL,
+        self.grade_slider = tk.Scale(root, from_=0.5, to=5.5, resolution=0.5, orient=tk.HORIZONTAL,
                                      label="Grade")
         self.grade_slider.pack()
 
