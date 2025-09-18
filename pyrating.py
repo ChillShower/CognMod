@@ -58,7 +58,6 @@ class ImageReviewer:
             return
         
         self.img_path = random.choice(self.images)
-        #img_path = self.images[self.index]
         
         if self.img_path not in self.reviewed:
             self.reviewed.append(self.img_path)
@@ -69,8 +68,6 @@ class ImageReviewer:
         self.grade_slider.set(5)  # reset slider to middle value
 
     def save_result(self, decision):
-        #img_path = random.choice(self.images)
-        #img_path = self.images[self.index]
         grade = self.grade_slider.get()
         with open(self.csv_file, "a", newline="") as f:
             writer = csv.writer(f)
