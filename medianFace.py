@@ -7,7 +7,7 @@ from PIL import Image
 folder = filedialog.askdirectory(title="Select CSV/image Folder")
 
 
-CsvFile=os.path.join(folder,'Result_Alex.csv')
+CsvFile=os.path.join(folder,'Final_Grades2.csv')
 
 imgs = []
 valid_images = [".jpg",".gif",".png",".tga"]
